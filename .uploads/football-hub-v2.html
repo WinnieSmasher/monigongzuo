@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Football Hub - 足球赛事中心</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0d0d0d;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  /* ===== Nav ===== */
+  .glass-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(13,13,13,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .nav-inner {
+    max-width: 720px; margin: 0 auto; padding: 0 1rem;
+    height: 64px; display: flex; align-items: center;
+  }
+  .logo { display: flex; align-items: center; gap: 0.5rem; }
+  .logo-text { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; font-style: italic; }
+  .logo-text span { color: #00e676; }
+
+  /* ===== Main ===== */
+  main {
+    padding-top: 6rem; padding-bottom: 4rem;
+    max-width: 720px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem;
+  }
+  .hero { margin-bottom: 2rem; }
+  .hero h1 {
+    font-size: 2rem; font-weight: 900; color: #00e676;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;
+  }
+  .hero p { color: #9ca3af; font-size: 0.95rem; font-weight: 500; }
+
+  /* ===== Masonry ===== */
+  .masonry-grid {
+    columns: 1; column-gap: 1rem;
+  }
+  @media (min-width: 580px) { .masonry-grid { columns: 2; } }
+  .masonry-item {
+    break-inside: avoid; margin-bottom: 1rem;
+  }
+
+  /* ===== Card ===== */
+  .match-card {
+    position: relative; overflow: hidden; border-radius: 0.75rem;
+    background: #1a1a1a; border: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0; transform: translateY(20px);
+    animation: cardIn 0.5s ease forwards;
+  }
+  @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+  .match-card:hover {
+    border-color: rgba(0,230,118,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,230,118,0.06);
+  }
+  .card-img-wrap { position: relative; overflow: hidden; }
+  .card-img-wrap img {
+    width: 100%; display: block; object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .match-card:hover .card-img-wrap img { transform: scale(1.05); }
+  .card-img-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+  }
+  .card-live-badge {
+    position: absolute; top: 0.75rem; left: 0.75rem;
+    display: flex; align-items: center; gap: 0.25rem;
+    background: #ff4d4d; color: #fff;
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 0.2rem 0.5rem; border-radius: 0.25rem;
+  }
+  .card-minute {
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    color: #ffab00; font-size: 0.7rem; font-weight: 700;
+    padding: 0.2rem 0.4rem; border-radius: 0.25rem;
+  }
+  .card-ft-badge {
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    color: #666; font-size: 10px; font-weight: 800;
+    padding: 0.2rem 0.4rem; border-radius: 0.25rem;
+  }
+  .card-body { padding: 1rem 1rem 1.15rem; }
+  .card-league {
+    font-size: 10px; color: #00e676; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;
+  }
+  .card-team-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.2rem 0;
+  }
+  .card-team-row .score-col { text-align: right; }
+  .card-score-row-label {
+    text-align: center; font-size: 9px; color: #555;
+    margin-bottom: 0.15rem; letter-spacing: 0.06em;
+  }
+  .card-team-row + .card-team-row { margin-top: 0.15rem; }
+  .card-team-name { font-weight: 700; font-size: 0.95rem; }
+  .card-score {
+    font-size: 1.2rem; font-weight: 900; font-style: italic;
+    color: #555;
+  }
+  .card-score.has-score { color: #fff; }
+  .card-footer {
+    margin-top: 0.75rem; padding-top: 0.6rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.7rem; color: #555; font-weight: 500;
+    display: flex; justify-content: space-between;
+  }
+  .card-footer .live-text { color: #00e676; }
+
+  /* Placeholder */
+  .placeholder-card {
+    border-radius: 0.75rem;
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.05);
+    overflow: hidden;
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  .placeholder-img {
+    background: #222;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .placeholder-body { padding: 1rem; }
+  .placeholder-line {
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* ===== Modal ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: none; align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-bg {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(6px);
+  }
+  .modal-content {
+    position: relative; width: 100%; max-width: 40rem;
+    max-height: 90vh; overflow-y: auto;
+    background: #1a1a1a; border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal-content::-webkit-scrollbar { width: 3px; }
+  .modal-content::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  .modal-close {
+    position: sticky; top: 1rem; float: right; margin: 1rem 1rem 0 0;
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: none;
+    color: #fff; font-size: 0.9rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10; transition: background 0.2s;
+  }
+  .modal-close:hover { background: #ff4d4d; }
+  .modal-inner { padding: 1.5rem 1.75rem 2rem; }
+
+  /* Carousel */
+  .carousel-container {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 9; overflow: hidden; border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .carousel-track {
+    display: flex; height: 100%;
+    transition: transform 0.5s ease-in-out;
+  }
+  .carousel-slide { min-width: 100%; height: 100%; }
+  .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5); color: #fff; border: none;
+    width: 2rem; height: 2rem; border-radius: 9999px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 5; opacity: 0; transition: opacity 0.3s;
+  }
+  .carousel-container:hover .carousel-btn { opacity: 1; }
+  .carousel-btn:hover { background: #00e676; color: #000; }
+  .carousel-prev { left: 0.5rem; }
+  .carousel-next { right: 0.5rem; }
+  .carousel-dots {
+    position: absolute; bottom: 0.6rem; left: 50%;
+    transform: translateX(-50%); display: flex; gap: 0.4rem;
+  }
+  .carousel-dot {
+    width: 6px; height: 6px; border-radius: 9999px;
+    background: rgba(255,255,255,0.3); cursor: pointer;
+    transition: all 0.3s; border: none;
+  }
+  .carousel-dot.active { background: #00e676; width: 16px; }
+
+  /* Detail */
+  .detail-league {
+    font-size: 10px; color: #00e676; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;
+  }
+  .detail-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 0.6rem; }
+  .detail-score-label { font-size: 10px; color: #666; margin-bottom: 0.3rem; }
+  .detail-score-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .detail-score-big {
+    font-size: 2.8rem; font-weight: 900; font-style: italic;
+    letter-spacing: -0.02em;
+  }
+  .detail-status-badge {
+    padding: 0.2rem 0.6rem; border-radius: 0.375rem;
+    background: #111; border: 1px solid rgba(255,255,255,0.1);
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .detail-status-badge.live { color: #ff4d4d; border-color: rgba(255,77,77,0.3); background: rgba(255,77,77,0.08); }
+  .detail-status-badge.finished { color: #666; }
+  .detail-status-badge.scheduled { color: #2979ff; border-color: rgba(41,121,255,0.3); background: rgba(41,121,255,0.08); }
+
+  .detail-info-list { margin-top: 1.25rem; }
+  .detail-info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.85rem;
+  }
+  .detail-info-row:last-child { border-bottom: none; }
+  .detail-info-label { color: #666; }
+  .detail-info-value { color: #fff; font-weight: 600; }
+
+  @media (max-width: 580px) {
+    .hero h1 { font-size: 1.5rem; }
+    .detail-score-big { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="glass-nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <iconify-icon class="text-[#00e676]" style="font-size:24px" icon="ion:football"></iconify-icon>
+      <div class="logo-text">FOOTBALL <span>HUB</span></div>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="hero">
+    <h1>今日赛事</h1>
+    <p>实时比分、预告及完整比赛详情</p>
+  </div>
+  <div class="masonry-grid" id="matchContainer"></div>
+</main>
+
+<div class="modal-overlay" id="matchModal">
+  <div class="modal-bg" onclick="closeModal()"></div>
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()"><iconify-icon icon="lucide:x"></iconify-icon></button>
+    <div class="modal-inner" id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/*
+ * 数据表结构（一张表即可存储）:
+ *
+ * matches 表
+ * ─────────────┬──────────────┬──────┬───────────────────────────────────
+ * 字段         │ 类型         │ 说明 │ 示例
+ * ─────────────┼──────────────┼──────┼───────────────────────────────────
+ * id           │ INT          │ 主键 │ 1
+ * league       │ VARCHAR(50)  │ 联赛 │ PREMIER LEAGUE
+ * home_team    │ VARCHAR(50)  │ 主队 │ Arsenal
+ * away_team    │ VARCHAR(50)  │ 客队 │ Chelsea
+ * home_score   │ INT NULL     │ 主队得分 │ 3（未开始为 NULL）
+ * away_score   │ INT NULL     │ 客队得分 │ 1（未开始为 NULL）
+ * status       │ VARCHAR(20)  │ 状态 │ LIVE / FINISHED / SCHEDULED
+ * minute       │ VARCHAR(10)  │ 比赛分钟 │ 78'（非LIVE为空）
+ * match_time   │ VARCHAR(30)  │ 比赛时间 │ Jul 5, 2026 20:00
+ * venue        │ VARCHAR(100) │ 球场 │ Emirates Stadium
+ * image        │ VARCHAR(255) │ 列表缩略图URL │ https://...
+ * images       │ JSON         │ 轮播图URL数组 │ ["url1","url2","url3"]
+ * card_img_h   │ INT          │ 列表卡片图片高度(px) │ 280
+ * ─────────────┴──────────────┴──────┴───────────────────────────────────
+ */
+
+const matches = [
+  {
+    id: 1,
+    league: "PREMIER LEAGUE · 英超联赛",
+    home_team: "Arsenal · 阿森纳",
+    away_team: "Chelsea · 切尔西",
+    home_score: 3,
+    away_score: 1,
+    status: "FINISHED",
+    minute: null,
+    match_time: "Jul 5, 2026 20:00",
+    venue: "Emirates Stadium · 酋长球场",
+    image: "https://picsum.photos/seed/match1a/800/450",
+    images: [
+      "https://picsum.photos/seed/match1a/800/450",
+      "https://picsum.photos/seed/match1b/800/450",
+      "https://picsum.photos/seed/match1c/800/450"
+    ],
+    card_img_h: 280
+  }
+];
+
+const placeholders = [
+  { imgH: 200 }, { imgH: 320 }, { imgH: 240 },
+  { imgH: 260 }, { imgH: 180 }, { imgH: 300 }
+];
+
+function renderCards() {
+  const container = document.getElementById('matchContainer');
+  const m = matches[0];
+
+  const isLive = m.status === 'LIVE';
+  const scoreStr = (m.home_score !== null && m.away_score !== null)
+    ? `${m.home_score} - ${m.away_score}` : '— : —';
+  const badgeHTML = isLive
+    ? `<div class="card-live-badge"><span>●</span> 直播中</div><div class="card-minute">${m.minute}</div>`
+    : m.status === 'FINISHED'
+    ? `<div class="card-ft-badge">完场</div>`
+    : '';
+
+  const statusLabel = isLive ? `${m.minute} 下半场` : m.status === 'FINISHED' ? '完场' : '即将开始';
+
+  const realCard = `
+    <div class="masonry-item" onclick="openModal(${m.id})">
+      <div class="match-card">
+        <div class="card-img-wrap" style="height:${m.card_img_h}px">
+          <img src="${m.image}" alt="${m.home_team} vs ${m.away_team}" loading="lazy"/>
+          <div class="card-img-gradient"></div>
+          ${badgeHTML}
+        </div>
+        <div class="card-body">
+          <div class="card-league">${m.league}</div>
+          <div class="card-score-row-label">比分（进球数）</div>
+          <div class="card-team-row">
+            <span class="card-team-name">${m.home_team}</span>
+            <span class="card-score has-score score-col">${m.home_score}</span>
+          </div>
+          <div class="card-team-row">
+            <span class="card-team-name">${m.away_team}</span>
+            <span class="card-score has-score score-col">${m.away_score}</span>
+          </div>
+          <div class="card-footer">
+            <span>${statusLabel}</span>
+            <span>${m.match_time}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  const placeholderCards = placeholders.map(p => `
+    <div class="placeholder-card">
+      <div class="placeholder-img" style="height:${p.imgH}px"></div>
+      <div class="placeholder-body">
+        <div class="placeholder-line" style="width:40%;height:6px;margin-bottom:0.75rem"></div>
+        <div class="placeholder-line" style="width:65%;height:10px;margin-bottom:0.4rem"></div>
+        <div class="placeholder-line" style="width:45%;height:10px;margin-bottom:0.4rem"></div>
+        <div class="placeholder-line" style="width:100%;height:1px;background:rgba(255,255,255,0.05);border-radius:0;margin-top:0.6rem"></div>
+        <div class="placeholder-line" style="width:55%;height:6px;margin-top:0.6rem"></div>
+      </div>
+    </div>
+  `).join('');
+
+  container.innerHTML = realCard + placeholderCards;
+}
+
+// ===== Modal =====
+let carouselIdx = 0;
+let carouselTimer = null;
+
+function openModal(id) {
+  const m = matches.find(x => x.id === id);
+  if (!m) return;
+
+  const isLive = m.status === 'LIVE';
+  const isFinished = m.status === 'FINISHED';
+  const scoreStr = (m.home_score !== null && m.away_score !== null)
+    ? `${m.home_score} - ${m.away_score}` : '— : —';
+  const statusText = isLive ? '直播中' : isFinished ? '已结束' : '即将开始';
+  const statusClass = isLive ? 'live' : isFinished ? 'finished' : 'scheduled';
+
+  const content = document.getElementById('modalContent');
+  content.innerHTML = `
+    <div class="carousel-container" onmouseenter="pauseCarousel()" onmouseleave="startCarousel()">
+      <div class="carousel-track" id="carouselTrack">
+        ${m.images.map(img => `<div class="carousel-slide"><img src="${img}" alt="比赛图片"/></div>`).join('')}
+      </div>
+      <button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)"><iconify-icon icon="lucide:chevron-left"></iconify-icon></button>
+      <button class="carousel-btn carousel-next" onclick="moveCarousel(1)"><iconify-icon icon="lucide:chevron-right"></iconify-icon></button>
+      <div class="carousel-dots">
+        ${m.images.map((_, i) => `<button class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="setCarousel(${i})"></button>`).join('')}
+      </div>
+    </div>
+
+    <div class="detail-league">${m.league}</div>
+    <div class="detail-title">${m.home_team.split(' · ')[0]} vs ${m.away_team.split(' · ')[0]}</div>
+    <div class="detail-score-label">比分（进球数）</div>
+    <div class="detail-score-row">
+      <div class="detail-score-big">${scoreStr}</div>
+      <div class="detail-status-badge ${statusClass}">${statusText}${isLive ? ' ' + m.minute : ''}</div>
+    </div>
+
+    <div class="detail-info-list">
+      <div class="detail-info-row">
+        <span class="detail-info-label">比赛时间</span>
+        <span class="detail-info-value">${m.match_time}</span>
+      </div>
+      <div class="detail-info-row">
+        <span class="detail-info-label">比赛球场</span>
+        <span class="detail-info-value">${m.venue}</span>
+      </div>
+      <div class="detail-info-row">
+        <span class="detail-info-label">主队</span>
+        <span class="detail-info-value">${m.home_team}</span>
+      </div>
+      <div class="detail-info-row">
+        <span class="detail-info-label">客队</span>
+        <span class="detail-info-value">${m.away_team}</span>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('matchModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  carouselIdx = 0;
+  updateCarousel();
+  startCarousel();
+}
+
+function closeModal() {
+  document.getElementById('matchModal').classList.remove('show');
+  document.body.style.overflow = '';
+  pauseCarousel();
+}
+
+function moveCarousel(step) {
+  const total = document.querySelectorAll('.carousel-slide').length;
+  carouselIdx = (carouselIdx + step + total) % total;
+  updateCarousel();
+}
+function setCarousel(i) { carouselIdx = i; updateCarousel(); }
+function updateCarousel() {
+  const track = document.getElementById('carouselTrack');
+  if (!track) return;
+  track.style.transform = `translateX(-${carouselIdx * 100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carouselIdx));
+}
+function startCarousel() { pauseCarousel(); carouselTimer = setInterval(() => moveCarousel(1), 3500); }
+function pauseCarousel() { clearInterval(carouselTimer); }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Touch support
+let touchX0 = 0;
+document.addEventListener('touchstart', e => { if (e.target.closest('.carousel-container')) touchX0 = e.changedTouches[0].screenX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (e.target.closest('.carousel-container')) {
+    const diff = touchX0 - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) moveCarousel(diff > 0 ? 1 : -1);
+  }
+}, { passive: true });
+
+renderCards();
+</script>
+</body>
+</html>
