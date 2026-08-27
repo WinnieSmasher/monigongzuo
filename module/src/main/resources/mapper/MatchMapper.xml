@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="red.mlz.study.module.mapper.MatchMapper">
+
+    <select id="selectAll" resultType="red.mlz.study.module.entity.Match">
+        select id, images, league, home_team, away_team, home_score, away_score,
+               `status`, `minute`, match_time, venue, create_time, update_time, is_deleted
+        from `match` where is_deleted = 0 order by id desc
+    </select>
+
+    <select id="selectById" resultType="red.mlz.study.module.entity.Match">
+        select id, images, league, home_team, away_team, home_score, away_score,
+               `status`, `minute`, match_time, venue, create_time, update_time, is_deleted
+        from `match` where id = #{id} and is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="red.mlz.study.module.entity.Match"
+            useGeneratedKeys="true" keyProperty="match.id">
+        insert into `match`
+            (images, league, home_team, away_team, home_score, away_score,
+             `status`, `minute`, match_time, venue, create_time, update_time, is_deleted)
+        values
+            (#{match.images}, #{match.league}, #{match.homeTeam}, #{match.awayTeam},
+             #{match.homeScore}, #{match.awayScore}, #{match.status}, #{match.minute},
+             #{match.matchTime}, #{match.venue}, #{match.createTime}, #{match.updateTime}, #{match.isDeleted})
+    </insert>
+
+    <update id="update" parameterType="red.mlz.study.module.entity.Match">
+        update `match`
+        set images      = #{match.images},
+            league      = #{match.league},
+            home_team   = #{match.homeTeam},
+            away_team   = #{match.awayTeam},
+            home_score  = #{match.homeScore},
+            away_score  = #{match.awayScore},
+            `status`    = #{match.status},
+            `minute`    = #{match.minute},
+            match_time  = #{match.matchTime},
+            venue       = #{match.venue},
+            update_time = #{match.updateTime}
+        where id = #{match.id}
+    </update>
+
+</mapper>
