@@ -22,8 +22,8 @@ CREATE TABLE `match` (
   `match_time` varchar(50) NOT NULL COMMENT '比赛时间',
   `venue` varchar(200) DEFAULT NULL COMMENT '比赛场地',
   `images` text DEFAULT NULL COMMENT '轮播图URL, $分隔',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `create_time` int unsigned NOT NULL COMMENT '创建时间, 秒级时间戳',
+  `update_time` int unsigned NOT NULL COMMENT '更新时间, 秒级时间戳',
   `is_deleted` tinyint DEFAULT 0 COMMENT '逻辑删除: 0未删除 1已删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='比赛信息表';
