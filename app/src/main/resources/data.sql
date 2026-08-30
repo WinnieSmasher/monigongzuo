@@ -1,2 +1,0 @@
-INSERT INTO match (league, home_team, away_team, home_score, away_score, status, "minute", match_time, venue, images, create_time, update_time, is_deleted)
-VALUES ('PREMIER LEAGUE', 'Arsenal', 'Chelsea', 3, 1, 'FINISHED', NULL, 'Jul 5, 2026 20:00', 'Emirates Stadium', 'https://picsum.photos/seed/match1a/800/450$https://picsum.photos/seed/match1b/800/450$https://picsum.photos/seed/match1c/800/450', 1719830400, 1719830400, 0);
