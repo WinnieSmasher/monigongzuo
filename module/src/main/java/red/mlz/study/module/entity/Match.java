@@ -13,8 +13,8 @@ public class Match {
     private String minute;
     private String matchTime;
     private String venue;
-    private java.time.LocalDateTime createTime;
-    private java.time.LocalDateTime updateTime;
+    private Integer createTime;
+    private Integer updateTime;
     private Integer isDeleted;
 
     public Long getId() { return id; }
@@ -50,11 +50,11 @@ public class Match {
     public String getVenue() { return venue; }
     public void setVenue(String venue) { this.venue = venue; }
 
-    public java.time.LocalDateTime getCreateTime() { return createTime; }
-    public void setCreateTime(java.time.LocalDateTime createTime) { this.createTime = createTime; }
+    public Integer getCreateTime() { return createTime; }
+    public void setCreateTime(Integer createTime) { this.createTime = createTime; }
 
-    public java.time.LocalDateTime getUpdateTime() { return updateTime; }
-    public void setUpdateTime(java.time.LocalDateTime updateTime) { this.updateTime = updateTime; }
+    public Integer getUpdateTime() { return updateTime; }
+    public void setUpdateTime(Integer updateTime) { this.updateTime = updateTime; }
 
     public Integer getIsDeleted() { return isDeleted; }
     public void setIsDeleted(Integer isDeleted) { this.isDeleted = isDeleted; }
